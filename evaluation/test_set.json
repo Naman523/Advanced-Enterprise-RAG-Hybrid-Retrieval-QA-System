@@ -1,0 +1,21 @@
+[
+  {
+    "question": "What projects are mentioned in the document?",
+    "expected_answer": [
+      "RAG chatbot",
+      "Knowledge base assistant"
+    ]
+  },
+  {
+    "question": "Which vector database is used?",
+    "expected_answer": [
+      "ChromaDB"
+    ]
+  },
+  {
+    "question": "Which embedding model is used?",
+    "expected_answer": [
+      "all-mpnet-base-v2"
+    ]
+  }
+]

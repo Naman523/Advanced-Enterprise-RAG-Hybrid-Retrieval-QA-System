@@ -1,0 +1,9 @@
+Numerical Sections for End Sem :
+
+Cyclomatic complexity calculation
+Function point calculation
+COCOMO Basic
+COCOMO intermediate
+CPM
+PERT
+Risk Cost analysis

@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Vector DB
+embeddings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+.env
+test_groq.py
+
+
+.env
+.venv/
+__pycache__/
+*.pyc
+embeddings/
+data/*.pdf
+.env
+*.env
+
