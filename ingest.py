@@ -122,6 +122,71 @@ def ingest():
     print(f"✅ Ingested {len(new_chunks)} new chunks successfully")
 
 
+# -------------------- SINGLE FILE INGEST --------------------
+def ingest_single_document(file_path: str):
+    """
+    Ingest a single document into the vector store
+    """
+    ext = file_path.lower().split(".")[-1]
+
+    try:
+        if ext == "pdf":
+            loader = PyPDFLoader(file_path)
+        elif ext == "txt":
+            loader = TextLoader(file_path, encoding="utf-8")
+        elif ext == "csv":
+            loader = CSVLoader(file_path)
+        elif ext in ["doc", "docx"]:
+            loader = UnstructuredWordDocumentLoader(file_path)
+        elif ext == "md":
+            loader = UnstructuredMarkdownLoader(file_path)
+        elif ext in ["html", "htm"]:
+            loader = UnstructuredHTMLLoader(file_path)
+        else:
+            raise ValueError(f"Unsupported file type: {ext}")
+
+        docs = loader.load()
+        file_name = os.path.basename(file_path)
+
+        for d in docs:
+            d.metadata.update({
+                "source": file_name,
+                "path": file_path,
+                "file_type": ext,
+                "page": d.metadata.get("page", 0),
+            })
+
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=500,
+            chunk_overlap=100
+        )
+        chunks = splitter.split_documents(docs)
+
+        embeddings = MPNetEmbeddings()
+        vectorstore = Chroma(
+            persist_directory=CHROMA_PATH,
+            embedding_function=embeddings
+        )
+
+        existing_ids = set(vectorstore.get()["ids"])
+        new_chunks = []
+
+        for i, chunk in enumerate(chunks):
+            chunk_id = f"{chunk.metadata['source']}_{chunk.metadata.get('page', 0)}_{i}"
+            if chunk_id not in existing_ids:
+                chunk.metadata["chunk_id"] = chunk_id
+                new_chunks.append(chunk)
+
+        if new_chunks:
+            vectorstore.add_documents(new_chunks)
+            vectorstore.persist()
+
+        print(f"✅ Ingested {len(new_chunks)} chunks from {file_name}")
+
+    except Exception as e:
+        raise Exception(f"Failed to ingest {file_path}: {str(e)}")
+
+
 # -------------------- ENTRY --------------------
 if __name__ == "__main__":
     ingest()

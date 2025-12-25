@@ -138,3 +138,14 @@ Question:
         "answer": answer,
         "sources": sources
     }
+
+
+# ==================== REINITIALIZE ====================
+def reinitialize():
+    """
+    Force reinitialize the RAG system after document changes
+    """
+    global _llm, _vectorstore, _retriever
+    _vectorstore = None
+    _retriever = None
+    initialize()

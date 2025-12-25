@@ -6,21 +6,29 @@ A Retrieval-Augmented Generation (RAG) chatbot that answers questions from your 
 
 🚀 Features
 
-📂 PDF document ingestion
+📂 Multi-format document ingestion (PDF, TXT, CSV, DOC, MD, HTML)
+
+📤 Drag-and-drop document upload via modern React UI
 
 🧠 Semantic search using embeddings
 
-🔎 Hybrid retrieval (FAISS + BM25)
+🔎 Hybrid retrieval (ChromaDB + BM25)
 
 🎯 Reranking using cross-encoder models
 
-🤖 Local LLM inference using Ollama
+🤖 Local LLM inference using Ollama (phi3:mini)
 
 ⚡ Optimized for speed with caching & conditional execution
 
-🌐 FastAPI backend
+🌐 FastAPI backend with full CRUD API
 
-🎨 Streamlit frontend UI
+🎨 Modern React frontend with Tailwind CSS
+
+🌓 Light/Dark mode support
+
+📱 Fully responsive design
+
+💬 Chat-style interface with Markdown rendering
 
 🔐 No paid APIs, runs fully locally
 
@@ -32,74 +40,59 @@ A Retrieval-Augmented Generation (RAG) chatbot that answers questions from your 
 
 🏗️ Project Architecture
 
-User
+User (React Frontend)
  ↓
-Streamlit UI
- ↓
-FastAPI Backend (/ask)
- ↓
+FastAPI Backend
+ ├── /upload (Document Upload)
+ ├── /documents (List/Delete)
+ └── /ask (Query RAG System)
+      ↓
 Query Expansion (optional)
  ↓
-Hybrid Retrieval (BM25 + FAISS)
+Hybrid Retrieval (BM25 + ChromaDB)
  ↓
 Reranking (Cross-Encoder)
  ↓
-Local LLM (Ollama - llama3)
+Local LLM (Ollama - phi3:mini)
  ↓
-Final Answer
+Final Answer (with Sources)
 
 
 
 
 📁 Folder Structure
 RAG_CHATBOT/
-├── api.py                  # FastAPI backend
-├── ui.py                   # Streamlit frontend
-├── ingest.py               # PDF ingestion & embedding creation
-├── rag_chain.py            # Core RAG pipeline (optimized)
+├── api.py                      # FastAPI backend with CRUD endpoints
+├── ui.py                       # Legacy Streamlit UI (optional)
+├── ingest.py                   # Document ingestion & embedding
+├── rag_chain.py                # Core RAG pipeline (optimized)
+│
+├── app/frontend/               # Modern React Frontend
+│   ├── src/
+│   │   ├── components/         # React components
+│   │   ├── services/           # API integration
+│   │   ├── utils/              # Helper functions
+│   │   └── App.jsx             # Main app
+│   ├── package.json
+│   └── README.md
 │
 ├── llm/
 │   ├── __init__.py
-│   └── local_llm.py        # Ollama LLM loader (cached)
+│   └── local_llm.py            # Ollama LLM loader (cached)
 │
 ├── pipelines/
 │   ├── __init__.py
-│   └── query_expansion.py  # Smart query expansion
+│   └── query_expansion.py      # Smart query expansion
 │
 ├── retrievers/
-│   ├── hybrid.py           # BM25 + FAISS retrieval
-│   └── reranker.py         # Cross-encoder reranking
+│   ├── hybrid.py               # BM25 + ChromaDB retrieval
+│   ├── reranker.py             # Cross-encoder reranking
+│   ├── vector.py               # Vector store retriever
+│   └── bm25.py                 # BM25 retriever
 │
-├── data/                   # Input PDFs
-├── embeddings/             # FAISS vector store
-├── requirements.txt
-└── README.md
-
-
-
-
-
-
-RAG_CHATBOT/
-├── api.py                  # FastAPI backend
-├── ui.py                   # Streamlit frontend
-├── ingest.py               # PDF ingestion & embedding creation
-├── rag_chain.py            # Core RAG pipeline (optimized)
-│
-├── llm/
-│   ├── __init__.py
-│   └── local_llm.py        # Ollama LLM loader (cached)
-│
-├── pipelines/
-│   ├── __init__.py
-│   └── query_expansion.py  # Smart query expansion
-│
-├── retrievers/
-│   ├── hybrid.py           # BM25 + FAISS retrieval
-│   └── reranker.py         # Cross-encoder reranking
-│
-├── data/                   # Input PDFs
-├── embeddings/             # FAISS vector store
+├── data/docs/                  # Uploaded documents
+├── embeddings/chroma/          # ChromaDB vector store
+├── evaluation/                 # RAG evaluation metrics
 ├── requirements.txt
 └── README.md
 
@@ -172,8 +165,48 @@ python ingest.py
 
 
 ▶️ Run the Application
+
+Option 1: Modern React Frontend (Recommended)
+
 Terminal 1 — Backend
-uvicorn api:app
+uvicorn api:app --reload
+
+Terminal 2 — Frontend
+cd app/frontend
+npm install  # First time only
+npm run dev
+
+Open http://localhost:3000 in your browser
+
+Option 2: Legacy Streamlit UI
+
+Terminal 1 — Backend
+uvicorn api:app --reload
 
 Terminal 2 — Frontend
 streamlit run ui.py
+
+
+🎨 Frontend Features
+
+Modern React UI with:
+- Drag-and-drop document upload
+- Real-time document management
+- Chat-style interface
+- Markdown rendering for AI responses
+- Collapsible source context
+- Light/Dark mode toggle
+- Fully responsive design
+- Smooth animations
+
+Backend API Endpoints:
+- GET /ask?q=<query> - Ask questions
+- POST /upload - Upload documents
+- GET /documents - List all documents
+- DELETE /documents/<filename> - Delete document
+
+
+📖 Detailed Documentation
+
+Frontend Guide: See app/frontend/README.md for detailed frontend documentation
+Backend API: Visit http://localhost:8000/docs for interactive API documentation
